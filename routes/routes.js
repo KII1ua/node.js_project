@@ -6,6 +6,10 @@ router.get('/', (req, res) => {
     res.render('login');
 });
 
+router.get('/schedule', (req,res) => {
+    res.render('schedule');
+})
+
 router.post('/login', (req, res) => {
     const id = req.body.id;
     const password = req.body.password;
