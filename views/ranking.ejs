@@ -1,0 +1,299 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>KBO 순위</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-family: Arial, sans-serif;
+            }
+            th, td {
+              padding: 8px;
+              text-align: center;
+              border: 1px solid #ddd;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+          </style>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>팀</th>
+                <th>경기수</th>
+                <th>승</th>
+                <th>패</th>
+                <th>무</th>
+                <th>승률</th>
+                <th>게임차</th>
+                <th>연속</th>
+                <th>출루율</th>
+                <th>장타율</th>
+                <th>최근10경기</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tbody id="regularTeamRecordList_table">
+        
+            <tr>
+                <th><strong>1</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_HT">KIA</span>
+                    </div>
+                </td>
+                <td><span>58</span></td>
+                <td><span>35</span></td>
+                <td><span>22</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.614</strong></td>
+                <td><span>0.0</span></td>
+                <td><span>1패</span></td>
+                <td><span>0.364</span></td>
+                <td><span>0.443</span></td>
+                <td><span>6승-4패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>2</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_LG">LG</span>
+                    </div>
+                </td>
+                <td><span>60</span></td>
+                <td><span>34</span></td>
+                <td><span>24</span></td>
+                <td><span>2</span></td>
+                <td><strong>0.586</strong></td>
+                <td><span>1.5</span></td>
+                <td><span>3승</span></td>
+                <td><span>0.376</span></td>
+                <td><span>0.411</span></td>
+                <td><span>9승-1패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>3</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_SS">삼성</span>
+                    </div>
+                </td>
+                <td><span>58</span></td>
+                <td><span>32</span></td>
+                <td><span>25</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.561</strong></td>
+                <td><span>3.0</span></td>
+                <td><span>4승</span></td>
+                <td><span>0.350</span></td>
+                <td><span>0.408</span></td>
+                <td><span>5승-5패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>4</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_OB">두산</span>
+                    </div>
+                </td>
+                <td><span>61</span></td>
+                <td><span>32</span></td>
+                <td><span>27</span></td>
+                <td><span>2</span></td>
+                <td><strong>0.542</strong></td>
+                <td><span>4.0</span></td>
+                <td><span>3패</span></td>
+                <td><span>0.344</span></td>
+                <td><span>0.430</span></td>
+                <td><span>4승-6패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>5</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_SK">SSG</span>
+                    </div>
+                </td>
+                <td><span>58</span></td>
+                <td><span>29</span></td>
+                <td><span>28</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.509</strong></td>
+                <td><span>6.0</span></td>
+                <td><span>4승</span></td>
+                <td><span>0.343</span></td>
+                <td><span>0.399</span></td>
+                <td><span>4승-6패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>6</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_NC">NC</span>
+                    </div>
+                </td>
+                <td><span>58</span></td>
+                <td><span>28</span></td>
+                <td><span>29</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.491</strong></td>
+                <td><span>7.0</span></td>
+                <td><span>1패</span></td>
+                <td><span>0.365</span></td>
+                <td><span>0.413</span></td>
+                <td><span>1승-9패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>7</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_KT">KT</span>
+                    </div>
+                </td>
+                <td><span>58</span></td>
+                <td><span>26</span></td>
+                <td><span>31</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.456</strong></td>
+                <td><span>9.0</span></td>
+                <td><span>1승</span></td>
+                <td><span>0.355</span></td>
+                <td><span>0.414</span></td>
+                <td><span>6승-4패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>8</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_HH">한화</span>
+                    </div>
+                </td>
+                <td><span>57</span></td>
+                <td><span>24</span></td>
+                <td><span>32</span></td>
+                <td><span>1</span></td>
+                <td><strong>0.429</strong></td>
+                <td><span>10.5</span></td>
+                <td><span>3패</span></td>
+                <td><span>0.347</span></td>
+                <td><span>0.402</span></td>
+                <td><span>6승-4패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>9</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_LT">롯데</span>
+                    </div>
+                </td>
+                <td><span>56</span></td>
+                <td><span>22</span></td>
+                <td><span>32</span></td>
+                <td><span>2</span></td>
+                <td><strong>0.407</strong></td>
+                <td><span>11.5</span></td>
+                <td><span>1승</span></td>
+                <td><span>0.337</span></td>
+                <td><span>0.404</span></td>
+                <td><span>5승-5패-0무</span></td>
+            </tr>
+        
+            <tr>
+                <th><strong>10</strong></th>
+                <td class="tm">
+                    <div>
+                        
+                            
+                            
+                                <span class="emblem"></span>
+                            
+                        
+                        <span id="team_WO">키움</span>
+                    </div>
+                </td>
+                <td><span>56</span></td>
+                <td><span>22</span></td>
+                <td><span>34</span></td>
+                <td><span>0</span></td>
+                <td><strong>0.393</strong></td>
+                <td><span>12.5</span></td>
+                <td><span>4패</span></td>
+                <td><span>0.334</span></td>
+                <td><span>0.381</span></td>
+                <td><span>3승-7패-0무</span></td>
+            </tr>
+        
+        </tbody>
+            </tbody>
+          </table>
+        </body>
+        </html>
+      

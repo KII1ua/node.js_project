@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { scrapeAndGenerateHTML } = require('./scrapers/scraper');
+const { scrapeRanking } = require('./scrapers/rankscraper');
 
 const app = express();
 const port = 3000;
@@ -32,4 +33,12 @@ app.listen(port, async () => {
     } catch (err) {
       console.error('스크래핑 중 오류가 발생했습니다:', err);
     }
-  });
+
+    try {
+      const scrapeRankData = await scrapeRanking();
+      await scrapeRanking(scrapeRankData);
+      console.log('ranking.ejs 파일이 업데이트되었습니다.');
+    } catch (err) {
+      console.log('스크래핑 중 오류가 발생하였습니다.');
+    }
+});

@@ -10,7 +10,11 @@ router.get('/', (req, res) => {
 
 router.get('/schedule', (req,res) => {
     res.render('schedule');
-})
+});
+
+router.get('/ranking', (req, res) => {
+    res.render('ranking');
+});
 
 router.post('/login', (req, res) => {
     const id = req.body.id;
