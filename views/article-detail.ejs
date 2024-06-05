@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>게시물 상세 페이지</title>
+  <!-- 필요한 스타일과 스크립트 추가 -->
+</head>
+<body>
+  <h1><%= article.title %></h1>
+  <p>작성자: <%= article.author_name %></p>
+  <p>작성일: <%= article.created_at.toLocaleDateString() %></p>
+  <p>가격: <%= article.price %></p>
+  <p>좌석: <%= article.seat_info %></p>
+  <p>경기 일정: <%= article.game_date %></p>
+  <p><%= article.content %></p>
+  <!-- 필요한 기능 버튼 추가 (수정, 삭제 등) -->
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>티켓 판매 게시판</title>
+    <style>
+        /* 전체 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+main {
+    padding: 20px;
+}
+
+.board-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-list th, .board-list td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.board-write form {
+    display: flex;
+    flex-direction: column;
+}
+
+.board-write label {
+    margin-top: 10px;
+}
+
+.board-write input, .board-write textarea {
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.board-write button {
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f2f2f2;
+    border: none;
+    cursor: pointer;
+}
+
+footer {
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>티켓 판매 게시판</h1>
+        <nav>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/board">게시판</a></li>
+                <li><a href="/login">로그인</a></li>
+                <li><a href="/register">회원가입</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="board-list">
+            <table>
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>제목</th>
+                  <th>작성자</th>
+                  <th>작성일</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (articles.length > 0) { %>
+                  <% articles.forEach((article, index) => { %>
+                    <tr>
+                      <td><%= index + 1 %></td>
+                      <td><a href="/article/<%= article.id %>"><%= article.title %></a></td>
+                      <td><%= article.author_name %></td>
+                      <td><%= article.created_at.toLocaleDateString() %></td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="4">게시글이 없습니다.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </section>
+
+        <section class="board-write">
+            <h2>게시글 작성</h2>
+            <form>
+                <label for="title">제목:</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="content">내용:</label>
+                <textarea id="content" name="content" required></textarea>
+
+                <label for="price">가격:</label>
+                <input type="number" id="price" name="price" required>
+
+                <label for="seat">좌석:</label>
+                <input type="text" id="seat" name="seat" required>
+
+                <label for="game-date">경기 일정:</label>
+                <input type="date" id="game-date" name="game-date" required>
+
+                <button type="submit">작성하기</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 티켓 판매 게시판. All rights reserved.</p>
+    </footer>
+    <script>
+        const writeForm = document.querySelector('.board-write form');
+
+        writeForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const price = document.getElementById('price').value;
+            const seat = document.getElementById('seat').value;
+            const gameDate = document.getElementById('game-date').value;
+
+            fetch('/write', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, content, price, seat, gameDate }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    // 게시글 작성 성공 후 게시판 목록 페이지로 이동하거나 원하는 동작 수행
+                }
+            })
+            .catch(error => {
+                console.error('게시글 작성 요청 실패:', error);
+                alert('게시글 작성 중 오류가 발생했습니다.');
+            });
+        });
+        alert(data.message);
+        window.location.href = '/write';
+    </script>
+</body>
+</html>

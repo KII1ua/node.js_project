@@ -15,6 +15,8 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use(express.json());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const homeRoutes = require('./routes/routes'); // connection 객체 전달
