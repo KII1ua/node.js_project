@@ -3,19 +3,29 @@ const router = express.Router();
 const connection = require('../db');
 const crypto = require('crypto');
 
-
+// 메인페이지 렌더링
 router.get('/', (req, res) => {
-    res.render('login');
+    const isLoggedIn = req.session.isLoggedIn || false;
+    const userName = req.session.userName || '';
+    res.render('main', { isLoggedIn, userName });
 });
 
+// 경기 일정 렌더링
 router.get('/schedule', (req,res) => {
     res.render('schedule');
 });
 
+// 경기 순위 렌더링
 router.get('/ranking', (req, res) => {
     res.render('ranking');
 });
 
+// 로그인 렌더링
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// Login Post
 router.post('/login', (req, res) => {
     const id = req.body.id;
     const password = req.body.password;
@@ -42,15 +52,19 @@ router.post('/login', (req, res) => {
         if(user.password !== hashedPassword) {
             return res.send('비밀번호가 일치하지 않습니다.');
         }
-
-        res.send('로그인 성공');
+        // 로그인 성공 시 세션에 로그인 상태와 사용자 이름 지정
+        req.session.isLoggedIn = true;
+        req.session.userName = user.name;
+        res.redirect('/');
     });
 });
 
+// 회원가입 렌더링
 router.get('/signup', (req, res) => {
     res.render('signup');
 });
 
+// 회원가입 post
 router.post('/signup', (req, res) => {
     const id = req.body.id;                 // 아이디
     let password = req.body.password;     // 비밀번호
@@ -77,23 +91,13 @@ router.post('/signup', (req, res) => {
     });
 });
 
-router.get('/users', (req, res) => {
-    const query = 'SELECT * FROM users';
-    connection.query(query, (err, results) => {
+router.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
         if(err) {
-            console.error('MySQL 쿼리 오류: ', err);
-            return res.status(500).send('서버 오류');
+            console.error('세션 삭제 중 오류 발생 ', err);
         }
-        res.json(results);
+        res.redirect('/');
     });
-});
-
-router.get('/home', (req, res) => {
-    res.send('/home 페이지');
-});
-
-router.get('/home/login', (req, res) => {
-    res.send('/home/login 페이지');
 });
 
 module.exports = router;

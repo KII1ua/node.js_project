@@ -1,17 +1,19 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 const { scrapeAndGenerateHTML } = require('./scrapers/scraper');
 const { scrapeRanking } = require('./scrapers/rankscraper');
 
 const app = express();
-const port = 3000;
+const port = 3000;    // 3000번대 포트 번호 사용
 
-// 미들웨어 사용해서 접속할때마다 콘솔에 현재시간 출력
-app.use(function(req, res, next) {
-    console.log('Time:', Date.now());
-    next();
-});
+// 세션 미들웨어 사용
+app.use(session({
+  secret: 'my-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
