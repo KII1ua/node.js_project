@@ -68,10 +68,10 @@ async function scrapeRanking() {
 
       fs.writeFileSync(filePath, html);
     } else {
-      console.error('Could not find the table element');
+      console.error('에러 발생');
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('에러 : ', error);
   } finally {
     await browser.close();
   }

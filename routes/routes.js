@@ -7,7 +7,20 @@ const crypto = require('crypto');
 router.get('/', (req, res) => {
     const isLoggedIn = req.session.isLoggedIn || false;
     const userName = req.session.userName || '';
-    res.render('main', { isLoggedIn, userName });
+
+    if(isLoggedIn) {
+      const userId = req.session.user.id;
+      const query = 'SELECT cr.id, cr.article_id, a.title FROM user_chatrooms uc JOIN chat_rooms cr ON uc.chatroom_id = cr.id JOIN article a ON cr.article_id = a.id WHERE uc.user_id = ?';
+      connection.query(query, [userId], (error, results) => {
+        if(error) {
+          console.error('채팅방 목록 조회 중 오류 발생:', error);
+          return res.render('main', { isLoggedIn, userName, chatrooms: [] });
+        }
+        res.render('main', { isLoggedIn, userName, chatrooms: results });
+      });
+    } else {
+      res.render('main', { isLoggedIn, userName, chatrooms: [] });
+    }
 });
 
 // 경기 일정 렌더링
@@ -54,8 +67,10 @@ router.post('/login', (req, res) => {
         }
         // 로그인 성공 시 세션에 로그인 상태와 사용자 이름 지정
         req.session.isLoggedIn = true;
-        req.session.userId = user.id;
-        req.session.userName = user.name;
+        req.session.user = {
+          id: user.id,
+          name: user.name
+        };
         res.redirect('/');
     });
 });
@@ -142,7 +157,7 @@ router.get('/write', (req, res) => {
 // 게시물 상세 페이지 라우트
 router.get('/article/:id', (req, res) => {
   const articleId = req.params.id;
-  const query = 'SELECT article.*, register.name AS author_name FROM article JOIN register ON article.author_id = register.id WHERE article.id = ?';
+  const query = 'SELECT article.*, register.id AS author_id, register.name AS author_name FROM article JOIN register ON article.author_id = register.id WHERE article.id = ?';
   connection.query(query, [articleId], (error, results) => {
     if (error) {
       console.error('게시물 조회 중 오류 발생: ', error);
@@ -152,9 +167,81 @@ router.get('/article/:id', (req, res) => {
         res.status(404).send('해당 게시물을 찾을 수 없습니다.');
       } else {
         const article = results[0];
+        article.author = {
+          id: article.author_id,
+          name: article.author_name
+        };
         res.render('article-detail', { article });
       }
     }
+  });
+});
+
+// 채팅방 생성
+router.post('/chat/create', (req, res) => {
+  const { articleId, userId } = req.body;
+
+  // 사용자 인증 확인
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Unauthorized '});
+  }
+
+  // 이미 존재하는 채팅방인지 확인
+  const query = 'SELECT * FROM chat_rooms WHERE article_id = ? AND (user1_id = ? OR user2_id = ?)';
+  connection.query(query, [articleId, userId, userId], (error, results) => {
+    if (error) {
+      console.error('채팅방 조회 중 오류 발생: ', error);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    if (results.length > 0) {
+      // 이미 존재하는 채팅방인 경우
+      const chatRoom = results[0];
+      return res.status(200).json({ chatRoomId: chatRoom.id });
+    } else {
+      // 새로운 채팅방 생성
+      const createQuery = 'INSERT INTO chat_rooms (article_id, user1_id, user2_id) VALUES (?, ?, ?)';
+      connection.query(createQuery, [articleId, req.session.user.id, userId], (createError, createResults) => {
+        if (createError) {
+          console.error('채팅방 생성 중 오류 발생: ', createError);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        const chatRoomId = createResults.insertId;
+
+        // 채팅방 목록 테이블에 저장
+        const insertQuery = 'INSERT INTO user_chatrooms (user_id, chatroom_id) VALUES (?, ?)';
+        connection.query(insertQuery, [req.session.user.id, chatRoomId], (insertError, insertResults) => {
+          if (insertError) {
+            console.error('채팅방 목록 저장 중 오류 발생: ', insertError);
+            return res.status(500).send('Internal Server Error');
+          }
+
+          return res.status(201).json({ chatRoomId });
+        });
+      });
+    }
+  });
+});
+
+// 채팅방 목록 랜더링
+router.get('/chat/:roomId', (req, res) => {
+  const roomId = req.params.roomId;
+  const userId = req.session.user.id;
+
+  const query = 'SELECT cr.*, a.title AS article_title FROM chat_rooms cr JOIN article a ON cr.article_id = a.id WHERE cr.id = ?';
+  connection.query(query, [roomId], (error, results) => {
+    if (error) {
+      console.error('채팅방 정보 조회 중 오류 발생: ', error);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('채팅방을 찾을 수 없습니다.');
+    }
+
+    const chatRoom = results[0];
+    res.render('chat', { userId, chatRoom });
   });
 });
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>채팅방 - <%= chatRoom.article_title %></title>
+  <!-- 필요한 스타일과 스크립트 추가 -->
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>채팅방 - <%= chatRoom.article_title %></h1>
+  <div id="chat-messages"></div>
+  <form id="chat-form">
+    <input type="text" id="message-input" placeholder="메시지를 입력하세요">
+    <button type="submit">전송</button>
+  </form>
+
+  <script>
+    const socket = io();
+    const roomId = '<%= chatRoom.id %>';
+    const userId = '<%= userId %>';
+
+    // 채팅방 입장 이벤트 전송
+    socket.emit('joinRoom', roomId);
+
+    // 채팅 메시지 전송 폼 제출 이벤트 처리
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = messageInput.value;
+      socket.emit('chatMessage', { roomId, userId, message });
+      messageInput.value = '';
+    });
+
+    // 서버로부터 받은 채팅 메시지를 화면에 표시
+    socket.on('chatMessage', (data) => {
+      const { userId, message } = data;
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${userId}: ${message}`;
+      chatMessages.appendChild(messageElement);
+    });
+  </script>
+</body>
+</html>
