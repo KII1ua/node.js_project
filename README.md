@@ -27,14 +27,6 @@ CREATE TABLE article (
     FOREIGN KEY (author_id) REFERENCES register(id)
 );
 
-
-CREATE TABLE chat_room (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    article_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (article_id) REFERENCES article(id)
-);
-
 // 채팅 메시지 저장 테이블
 CREATE TABLE chat_message (
     id INT AUTO_INCREMENT PRIMARY KEY,
