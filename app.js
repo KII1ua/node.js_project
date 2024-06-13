@@ -7,6 +7,7 @@ const { scrapeAndGenerateHTML } = require('./scrapers/scraper');
 const { scrapeRanking } = require('./scrapers/rankscraper');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const connection = require('./db');
 
 const port = 3000;    // 3000번대 포트 번호 사용
 
@@ -39,6 +40,16 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     // 채팅방에 입장했음을 알리는 메시지 전송
     io.to(roomId).emit('chatMessage', `User ${socket.id} joined the room`);
+
+    const selectQuery = 'SELECT cm.sender_id, r.name AS sender_name, cm.message, cm.created_at FROM chat_message cm JOIN register r ON cm.sender_id = r.id WHERE cm.room_id = ? ORDER BY cm.created_at';
+    connection.query(selectQuery, [roomId], (error, results) => {
+      if (error) {
+        console.error('대화 기록 조회 중 오류 발생: ', error);
+      } else {
+        // 이전 대화 기록을 클라이언트에게 전송
+        socket.emit('previousMessages', results);
+      }
+    });
   });
 
   socket.on('leaveRoom', (roomId) => {
@@ -49,7 +60,15 @@ io.on('connection', (socket) => {
   socket.on('chatMessage', (data) => {
     const { roomId, userId ,message } = data;
     
-    io.to(roomId).emit('chatMessage', { userId, message });
+    // 채팅 메시지를 db에 저장
+    const insertQuery = 'INSERT INTO chat_message (room_id, sender_id, message, created_at) VALUES (?, ?, ?, NOW())';
+    connection.query(insertQuery, [roomId, userId, message], (error, results) => {
+        if(error) {
+          console.error('채팅 메시지 저장 중 오류 발생: ', error);
+        } else {
+          io.to(roomId).emit('chatMessage', { userId, message });
+        }
+    });
   });
 });
 

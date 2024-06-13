@@ -7,7 +7,14 @@
 </head>
 <body>
   <h1>채팅방 - <%= chatRoom.article_title %></h1>
-  <div id="chat-messages"></div>
+  <div id="chat-messages">
+    <% messages.forEach((message) => { %>
+      <div>
+        <strong><%= message.sender_name %></strong>: <%= message.message %> (<%= message.created_at %>)
+      </div>
+    <% }); %>
+  </div>
+
   <form id="chat-form">
     <input type="text" id="message-input" placeholder="메시지를 입력하세요">
     <button type="submit">전송</button>
@@ -39,6 +46,17 @@
       const messageElement = document.createElement('div');
       messageElement.textContent = `${userId}: ${message}`;
       chatMessages.appendChild(messageElement);
+    });
+
+    socket.on('previousMessages', (messages) => {
+      chatMessages.innerHTML = '';
+
+      messages.forEach((message) => {
+        const { sender_name, message: text, created_at } = message;
+        const messageElement = document.createElement('div');
+        messageElement.innerHTML = `<strong>${sender_name}</strong>: ${text} (${created_at})`;
+        chatMessages.appendChild(messageElement);
+      });
     });
   </script>
 </body>

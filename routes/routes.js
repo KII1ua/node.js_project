@@ -229,7 +229,17 @@ router.get('/chat/:roomId', (req, res) => {
     }
 
     const chatRoom = results[0];
-    res.render('chat', { userId, chatRoom });
+
+    // 이전 대화 기록 조회 쿼리 추가
+    const selectQuery = 'SELECT cm.sender_id, r.name AS sender_name, cm.message, cm.created_at FROM chat_message cm JOIN register r ON cm.sender_id = r.id WHERE cm.room_id = ? ORDER BY cm.created_at';
+    connection.query(selectQuery, [roomId], (selectError, messages) => {
+      if(selectError) {
+        console.error('대화 기록 조회 중 오류 발생: ', selectError);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      res.render('chat', { userId, chatRoom, messages });
+    });
   });
 });
 
