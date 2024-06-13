@@ -1,5 +1,9 @@
+// 필요 패키지들
+npm install express
+npm install puppeteer
+npm install socket.io
 
-
+// 회원 정보 테이블
 CREATE TABLE register (
     id VARCHAR(20) NOT NULL PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
@@ -7,8 +11,9 @@ CREATE TABLE register (
     rs_number VARCHAR(20) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     birth DATETIME
-)
+);
 
+// 게시글 저장 테이블
 CREATE TABLE article (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -22,6 +27,7 @@ CREATE TABLE article (
     FOREIGN KEY (author_id) REFERENCES register(id)
 );
 
+
 CREATE TABLE chat_room (
     id INT AUTO_INCREMENT PRIMARY KEY,
     article_id INT NOT NULL,
@@ -29,16 +35,18 @@ CREATE TABLE chat_room (
     FOREIGN KEY (article_id) REFERENCES article(id)
 );
 
+// 채팅 메시지 저장 테이블
 CREATE TABLE chat_message (
     id INT AUTO_INCREMENT PRIMARY KEY,
     room_id INT NOT NULL,
     sender_id VARCHAR(20) NOT NULL,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (room_id) REFERENCES chat_room(id),
+    FOREIGN KEY (room_id) REFERENCES chat_rooms(id),
     FOREIGN KEY (sender_id) REFERENCES register(id)
 );
 
+// 채팅방 저장 테이블
 CREATE TABLE chat_rooms (
   id INT AUTO_INCREMENT PRIMARY KEY,
   article_id INT NOT NULL,
@@ -48,4 +56,13 @@ CREATE TABLE chat_rooms (
   FOREIGN KEY (article_id) REFERENCES article(id),
   FOREIGN KEY (user1_id) REFERENCES register(id),
   FOREIGN KEY (user2_id) REFERENCES register(id)
+);
+
+// 채팅방 목록 저장 테이블
+CREATE TABLE user_chatrooms (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(20) NOT NULL,
+  chatroom_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES register(id),
+  FOREIGN KEY (chatroom_id) REFERENCES chat_rooms(id)
 );
