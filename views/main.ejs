@@ -177,15 +177,8 @@ footer {
               <% } %>
         </div>
         <% if (isLoggedIn) { %>
-            <h2>채팅방 목록</h2>
-            <ul>
-              <% chatrooms.forEach((chatroom) => { %>
-                <li>
-                  <a href="/chat/<%= chatroom.id %>"><%= chatroom.title %></a>
-                </li>
-              <% }); %>
-            </ul>
-          <% } %>
+        <a href="/chat-list">채팅방 목록</a>
+        <% } %>
     </div>
 </header>
 

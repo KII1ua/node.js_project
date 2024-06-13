@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>채팅방 목록</title>
+</head>
+<body>
+  <h1>채팅방 목록</h1>
+  <ul>
+    <% chatrooms.forEach((chatroom) => { %>
+      <li>
+        <a href="/chat/<%= chatroom.id %>"><%= chatroom.article_title %></a>
+      </li>
+    <% }); %>
+  </ul>
+</body>
+</html>

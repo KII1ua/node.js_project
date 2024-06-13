@@ -5,22 +5,9 @@ const crypto = require('crypto');
 
 // 메인페이지 렌더링
 router.get('/', (req, res) => {
-    const isLoggedIn = req.session.isLoggedIn || false;
-    const userName = req.session.userName || '';
-
-    if(isLoggedIn) {
-      const userId = req.session.user.id;
-      const query = 'SELECT cr.id, cr.article_id, a.title FROM user_chatrooms uc JOIN chat_rooms cr ON uc.chatroom_id = cr.id JOIN article a ON cr.article_id = a.id WHERE uc.user_id = ?';
-      connection.query(query, [userId], (error, results) => {
-        if(error) {
-          console.error('채팅방 목록 조회 중 오류 발생:', error);
-          return res.render('main', { isLoggedIn, userName, chatrooms: [] });
-        }
-        res.render('main', { isLoggedIn, userName, chatrooms: results });
-      });
-    } else {
-      res.render('main', { isLoggedIn, userName, chatrooms: [] });
-    }
+  const isLoggedIn = req.session.isLoggedIn || false;
+  const userName = req.session.userName;
+  res.render('main', { isLoggedIn, userName });
 });
 
 // 경기 일정 렌더링
@@ -180,6 +167,7 @@ router.get('/article/:id', (req, res) => {
 // 채팅방 생성
 router.post('/chat/create', (req, res) => {
   const { articleId, userId } = req.body;
+  const user2Id = req.session.user.id;
 
   // 사용자 인증 확인
   if (!req.session.user) {
@@ -188,7 +176,7 @@ router.post('/chat/create', (req, res) => {
 
   // 이미 존재하는 채팅방인지 확인
   const query = 'SELECT * FROM chat_rooms WHERE article_id = ? AND (user1_id = ? OR user2_id = ?)';
-  connection.query(query, [articleId, userId, userId], (error, results) => {
+  connection.query(query, [articleId, userId, user2Id], (error, results) => {
     if (error) {
       console.error('채팅방 조회 중 오류 발생: ', error);
       return res.status(500).send('Internal Server Error');
@@ -201,7 +189,7 @@ router.post('/chat/create', (req, res) => {
     } else {
       // 새로운 채팅방 생성
       const createQuery = 'INSERT INTO chat_rooms (article_id, user1_id, user2_id) VALUES (?, ?, ?)';
-      connection.query(createQuery, [articleId, req.session.user.id, userId], (createError, createResults) => {
+      connection.query(createQuery, [articleId, userId, user2Id], (createError, createResults) => {
         if (createError) {
           console.error('채팅방 생성 중 오류 발생: ', createError);
           return res.status(500).send('Internal Server Error');
@@ -210,8 +198,8 @@ router.post('/chat/create', (req, res) => {
         const chatRoomId = createResults.insertId;
 
         // 채팅방 목록 테이블에 저장
-        const insertQuery = 'INSERT INTO user_chatrooms (user_id, chatroom_id) VALUES (?, ?)';
-        connection.query(insertQuery, [req.session.user.id, chatRoomId], (insertError, insertResults) => {
+        const insertQuery = 'INSERT INTO user_chatrooms (user_id, chatroom_id) VALUES (?, ?), (?, ?)';
+        connection.query(insertQuery, [userId, chatRoomId, user2Id, chatRoomId], (insertError, insertResults) => {
           if (insertError) {
             console.error('채팅방 목록 저장 중 오류 발생: ', insertError);
             return res.status(500).send('Internal Server Error');
@@ -243,6 +231,29 @@ router.get('/chat/:roomId', (req, res) => {
     const chatRoom = results[0];
     res.render('chat', { userId, chatRoom });
   });
+});
+
+router.get('/chat-list', (req, res) => {
+  const isLoggedIn = req.session.isLoggedIn || false;
+  const userName = req.session.userName || '';
+
+  if (isLoggedIn) {
+    const userId = req.session.user.id;
+    const query = `SELECT cr.id, a.title AS article_title 
+      FROM user_chatrooms uc 
+      JOIN chat_rooms cr ON uc.chatroom_id = cr.id
+      JOIN article a ON cr.article_id = a.id
+      WHERE uc.user_id = ? OR cr.user1_id = ? OR cr.user2_id = ?`;
+    connection.query(query, [userId, userId, userId], (error, results) => {
+      if(error) {
+        console.error('채팅방 목록 조회 중 오류 발생: ', error);
+        return res.render('chat_list', { chatrooms: [] });
+      }
+      res.render('chat_list', { chatrooms: results });
+    });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 module.exports = router;
