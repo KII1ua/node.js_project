@@ -80,6 +80,19 @@ router.post('/signup', (req, res) => {
         return res.send('모든 필드를 입력하세요');
     }
 
+    // 아이디 중복 확인
+    const checkQuery = 'SELECT * FROM register WHERE id = ?';
+    connection.query(checkQuery, [id], (checkErr, checkResult) => {
+        if (checkErr) {
+            console.error('MySQL 쿼리 오류: ', checkErr);
+            return res.status(500).send('서버 오류');
+        }
+
+        if (checkResult.length > 0) {
+            // 중복된 아이디가 있을 경우
+            return res.send('이미 사용 중인 아이디입니다. 다른 아이디를 사용해주세요.');
+        }
+
     // crypto를 사용하여 비밀번호 암호화
     const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
@@ -91,6 +104,7 @@ router.post('/signup', (req, res) => {
     }
 
     res.send('회원가입이 완료되었습니다.');
+        });
     });
 });
 
@@ -119,7 +133,7 @@ router.get('/write', (req, res) => {
   // 게시글 작성 처리
   router.post('/write', (req, res) => {
     const { title, content, price, seat, gameDate } = req.body;
-    const authorId = req.session.userId; // 로그인한 사용자의 아이디
+    const authorId = req.session.user.id; // 로그인한 사용자의 아이디
   
     if (!authorId) {
       return res.status(401).json({ error: '로그인이 필요합니다.' });
@@ -263,6 +277,56 @@ router.get('/chat-list', (req, res) => {
     });
   } else {
     res.redirect('/login');
+  }
+});
+
+//나의 정보 
+router.get('/my_info', (req, res) => {
+  // 로그인 상태 확인
+  if (req.session.isLoggedIn) {
+    const userId = req.session.user.id;
+
+    // 사용자 정보 조회 쿼리
+    const query = 'SELECT id, name, rs_number, phone, birth FROM register WHERE id = ?';
+    connection.query(query, [userId], (error, results) => {
+      if (error) {
+        console.error('사용자 정보 조회 중 오류 발생: ', error);
+        res.status(500).send('Internal Server Error');
+      } else {
+        if (results.length === 0) {
+          res.status(404).send('사용자 정보를 찾을 수 없습니다.');
+        } else {
+          const user = results[0];
+          res.render('my_info', { user });
+        }
+      }
+    });
+  } else {
+    // 로그인하지 않은 경우 로그인 페이지로 리디렉션
+    res.redirect('/login');
+  }
+});
+
+// 나의정보에서 비밀번호 변경
+router.post('/change-password', (req, res) => {
+  const { newPassword, confirmPassword } = req.body;
+  const userId = req.session.user.id;
+
+  // 새 비밀번호 확인
+  if (newPassword !== confirmPassword) {
+    res.status(400).send('새 비밀번호와 확인 비밀번호가 일치하지 않습니다.');
+  } else {
+    // 새 비밀번호 업데이트
+    const hashedNewPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+    const updateQuery = 'UPDATE register SET password = ? WHERE id = ?';
+    connection.query(updateQuery, [hashedNewPassword, userId], (updateError, updateResults) => {
+      if (updateError) {
+        console.error('비밀번호 업데이트 중 오류 발생: ', updateError);
+        res.status(500).send('Internal Server Error');
+      } else {
+        res.send('비밀번호가 성공적으로 변경되었습니다.');
+      }
+    });
   }
 });
 
