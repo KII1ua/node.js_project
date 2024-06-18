@@ -4,6 +4,7 @@ const connection = require('../db');
 const crypto = require('crypto');
 const fs = require('fs');
 const cheerio = require('cheerio');
+const path = require('path');
 
 // 메인페이지 랜더링
 router.get('/', (req, res) => {
@@ -81,7 +82,8 @@ router.post('/login', (req, res) => {
         req.session.isLoggedIn = true;
         req.session.user = {
           id: user.id,
-          name: user.name
+          name: user.name,
+          favorite_team: user.favorite_team
         };
         res.redirect('/');
     });
