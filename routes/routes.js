@@ -6,6 +6,19 @@ const fs = require('fs');
 const cheerio = require('cheerio');
 const path = require('path');
 
+const teamMap = {
+  KIA: 'HT',
+  LG: 'LG',
+  두산: 'OB',
+  삼성: 'SS',
+  SSG: 'SK',
+  NC: 'NC',
+  한화: 'HH',
+  롯데: 'LT',
+  KT: 'KT',
+  키움: 'WO'
+};
+
 // 메인페이지 랜더링
 router.get('/', (req, res) => {
   const isLoggedIn = req.session.isLoggedIn || false;
@@ -13,24 +26,36 @@ router.get('/', (req, res) => {
   const favoriteTeam = req.session.user ? req.session.user.favorite_team : null;
 
   if (favoriteTeam) {
-    fs.readFile(path.join(__dirname, '../views/ranking.ejs'), 'utf8', (err, data) => {
-      if (err) {
-        console.error('ranking.ejs 파일 읽기 오류:', err);
-        return res.status(500).send('Internal Server Error');
-      }
+    const teamId = teamMap[favoriteTeam];
+    if (teamId) {
+      fs.readFile(path.join(__dirname, '../views/ranking.ejs'), 'utf8', (err, data) => {
+        if (err) {
+          console.error('ranking.ejs 파일 읽기 오류:', err);
+          return res.status(500).send('Internal Server Error');
+        }
 
-      const $ = cheerio.load(data);
-      const teamRow = $(`#team_${favoriteTeam}`).closest('tr');
-      const teamRanking = {
-        rank: teamRow.find('th').text(),
-        team: teamRow.find('.tm').text().trim(),
-        wins: teamRow.find('td').eq(3).text(),
-        losses: teamRow.find('td').eq(4).text(),
-        winningPercentage: teamRow.find('td').eq(6).text()
-      };
+        const $ = cheerio.load(data);
+        const teamRow = $(`#team_${teamId}`).closest('tr');
 
-      res.render('main', { isLoggedIn, userName, teamRanking });
-    });
+        if (teamRow.length === 0) {
+          console.warn(`좋아하는 팀 정보가 없습니다: ${favoriteTeam}`);
+          res.render('main', { isLoggedIn, userName, teamRanking: null });
+        } else {
+          const teamRanking = {
+            rank: teamRow.find('th').text(),
+            team: teamRow.find('.tm').text().trim(),
+            wins: teamRow.find('td').eq(3).text(),
+            losses: teamRow.find('td').eq(4).text(),
+            winningPercentage: teamRow.find('td').eq(6).text()
+          };
+
+          res.render('main', { isLoggedIn, userName, teamRanking });
+        }
+      });
+    } else {
+      console.warn(`알 수 없는 팀 이름: ${favoriteTeam}`);
+      res.render('main', { isLoggedIn, userName, teamRanking: null });
+    }
   } else {
     res.render('main', { isLoggedIn, userName, teamRanking: null });
   }
@@ -369,7 +394,40 @@ router.post('/change-favorite-team', (req, res) => {
       console.error('좋아하는 구단 업데이트 중 오류 발생: ', updateError);
       res.status(500).send('Internal Server Error');
     } else {
-      res.send('좋아하는 구단이 성공적으로 변경되었습니다.');
+      req.session.user.favorite_team = favorite_team;
+
+      // 변경된 팀의 순위 정보 가져오기
+      const teamId = teamMap[favorite_team];
+      if (teamId) {
+        fs.readFile(path.join(__dirname, '../views/ranking.ejs'), 'utf8', (err, data) => {
+          if (err) {
+            console.error('ranking.ejs 파일 읽기 오류:', err);
+            return res.redirect('/');
+          }
+
+          const $ = cheerio.load(data);
+          const teamRow = $(`#team_${teamId}`).closest('tr');
+
+          if (teamRow.length === 0) {
+            console.warn(`좋아하는 팀 정보가 없습니다: ${favorite_team}`);
+            return res.redirect('/');
+          } else {
+            const teamRanking = {
+              rank: teamRow.find('th').text(),
+              team: teamRow.find('.tm').text().trim(),
+              wins: teamRow.find('td').eq(3).text(),
+              losses: teamRow.find('td').eq(4).text(),
+              winningPercentage: teamRow.find('td').eq(6).text()
+            };
+
+            // 팀 순위 정보와 함께 메인 페이지로 리디렉션
+            return res.redirect('/?teamRanking=' + encodeURIComponent(JSON.stringify(teamRanking)));
+          }
+        });
+      } else {
+        console.warn(`알 수 없는 팀 이름: ${favorite_team}`);
+        return res.redirect('/');
+      }
     }
   });
 });

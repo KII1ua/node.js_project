@@ -4,14 +4,127 @@
       <head>
         <title>Baseball Schedule</title>
         <style>
-          table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 5px;
-          }
+        body {
+          background-color: #f2f2f2;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          margin-top: 70px; /* 헤더의 높이만큼 내용을 아래로 밀어줍니다. */
+      }
+      header {
+          background-color: #004687;
+          color: #fff;
+          padding: 20px;
+          text-align: right; /* 텍스트를 오른쪽 정렬 */
+      }
+      .title-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+      .title-bar h1 {
+          margin: 0;
+      }
+      nav {
+          background-color: #002D64;
+          padding: 10px;
+          text-align: center;
+      }
+      nav ul {
+          list-style-type: none;
+          margin: 0 auto; /* 가운데 정렬 */
+          padding: 0;
+      }
+      nav ul li {
+          display: inline;
+          margin-right: 10px;
+      }
+      nav ul li a {
+          color: #fff;
+          text-decoration: none;
+          padding: 5px 10px;
+      }
+      nav ul li a:hover {
+          background-color: #66A7FF;
+      }
+      .login-button,
+      .signup-button {
+          background-color: #007bff;
+          border: none;
+          color: white;
+          padding: 8px 20px;
+          text-align: center;
+          text-decoration: none;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+      .login-button:hover,
+      .signup-button:hover {
+          background-color: #0056b3;
+      }
+      .main-content {
+          padding: 20px;
+      }
+      .article {
+          background-color: #fff;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: 20px;
+          margin-bottom: 20px;
+      }
+      .article h2 {
+          color: #004687;
+      }
+      .article p {
+          color: #333;
+      }
+      footer {
+          background-color: #004687;
+          color: #fff;
+          padding: 50px;
+          text-align: center;
+      }
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: Arial, sans-serif;
+          margin-bottom: 20px;
+      }
+      th, td {
+          padding: 8px;
+          text-align: center;
+          border: 1px solid #ddd;
+      }
+      th {
+          background-color: #f2f2f2;
+      }
         </style>
       </head>
       <body>
+      <header>
+      <div class="title-bar">
+          <h1>BASE</h1>
+          <!-- 로그인 및 회원가입 버튼 추가 -->
+          <div>
+              <a href="/login" class="login-button">로그인</a>
+              <a href="/signup" class="signup-button">회원가입</a>
+          </div>
+      </div>
+  </header>
+  <nav>
+      <ul>
+          <li><a href="/">홈</a></li>
+          <li><a href="/ranking">순위</li>
+          <li><a href="/schedule">경기 일정</a></li>
+          <li><a href="/write">티켓 판매 게시판</a></li>
+          <li><a href="/my_info">나의 정보</a></li>
+      </ul>
+  </nav>
+  
+  <main class="main-content">
+  <h2>KBO 리그 2024 시즌 일정</h2>
+  <table class="schedule-table">
         <table>
           <tr>
             <th>날짜</th>
@@ -1070,6 +1183,9 @@
             </tr>
           
         </table>
+        <footer>
+          <p>&copy; 2024 야구 홈페이지. BASE WEB.</p>
+      </footer>
       </body>
     </html>
   

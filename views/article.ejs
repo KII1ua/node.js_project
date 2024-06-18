@@ -2,89 +2,156 @@
 <html>
 <head>
     <title>티켓 판매 게시판</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* 전체 스타일 */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #f2f2f2;
-    padding: 20px;
-}
-
-header h1 {
-    margin: 0;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin-right: 10px;
-}
-
-main {
-    padding: 20px;
-}
-
-.board-list table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.board-list th, .board-list td {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.board-write form {
-    display: flex;
-    flex-direction: column;
-}
-
-.board-write label {
-    margin-top: 10px;
-}
-
-.board-write input, .board-write textarea {
-    padding: 5px;
-    margin-top: 5px;
-}
-
-.board-write button {
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #f2f2f2;
-    border: none;
-    cursor: pointer;
-}
-
-footer {
-    background-color: #f2f2f2;
-    padding: 20px;
-    text-align: center;
-}
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            margin-top: 70px; /* 헤더의 높이만큼 내용을 아래로 밀어줍니다. */
+        }
+        header {
+            background-color: #004687;
+            color: #fff;
+            padding: 20px;
+            text-align: right; /* 텍스트를 오른쪽 정렬 */
+        }
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title-bar h1 {
+            margin: 0;
+        }
+        nav {
+            background-color: #002D64;
+            padding: 10px;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0 auto; /* 가운데 정렬 */
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+        nav ul li a:hover {
+            background-color: #66A7FF;
+        }
+        .login-button,
+        .signup-button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .login-button:hover,
+        .signup-button:hover {
+            background-color: #0056b3;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .article {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .article h2 {
+            color: #004687;
+        }
+        .article p {
+            color: #333;
+        }
+        footer {
+            background-color: #004687;
+            color: #fff;
+            padding: 50px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .board-write form {
+            display: flex;
+            flex-direction: column;
+        }
+        .board-write form div {
+            margin-bottom: 10px;
+        }
+        .board-write label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .board-write input, .board-write textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .board-write button {
+            padding: 10px 20px;
+            background-color: #47494afc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .board-write button:hover {
+            background-color: #003366;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>티켓 판매 게시판</h1>
-        <nav>
-            <ul>
-                <li><a href="/">홈</a></li>
-                <li><a href="/board">게시판</a></li>
-                <li><a href="/login">로그인</a></li>
-                <li><a href="/register">회원가입</a></li>
-            </ul>
-        </nav>
+        <div class="title-bar">
+            <h1>BASE</h1>
+            <!-- 로그인 및 회원가입 버튼 추가 -->
+            <div>
+                <a href="/login" class="login-button">로그인</a>
+                <a href="/signup" class="signup-button">회원가입</a>
+            </div>
+        </div>
     </header>
-
+    <nav>
+        <ul>
+            <li><a href="/">홈</a></li>
+            <li><a href="/ranking">순위</li>
+            <li><a href="/schedule">경기 일정</a></li>
+            <li><a href="/write">티켓 판매 게시판</a></li>
+            <li><a href="/my_info">나의 정보</a></li>
+        </ul>
+    </nav>
     <main>
         <section class="board-list">
             <table>
@@ -118,28 +185,33 @@ footer {
         <section class="board-write">
             <h2>게시글 작성</h2>
             <form>
-                <label for="title">제목:</label>
-                <input type="text" id="title" name="title" required>
-
-                <label for="content">내용:</label>
-                <textarea id="content" name="content" required></textarea>
-
-                <label for="price">가격:</label>
-                <input type="number" id="price" name="price" required>
-
-                <label for="seat">좌석:</label>
-                <input type="text" id="seat" name="seat" required>
-
-                <label for="game-date">경기 일정:</label>
-                <input type="date" id="game-date" name="game-date" required>
-
+                <div>
+                    <label for="title">제목:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div>
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" required></textarea>
+                </div>
+                <div>
+                    <label for="price">가격:</label>
+                    <input type="number" id="price" name="price" required>
+                </div>
+                <div>
+                    <label for="seat">좌석:</label>
+                    <input type="text" id="seat" name="seat" required>
+                </div>
+                <div>
+                    <label for="game-date">경기 일정:</label>
+                    <input type="date" id="game-date" name="game-date" required>
+                </div>
                 <button type="submit">작성하기</button>
             </form>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 티켓 판매 게시판. All rights reserved.</p>
+        <p>&copy; 2024 야구 홈페이지. BASE WEB.</p>
     </footer>
     <script>
         const writeForm = document.querySelector('.board-write form');
@@ -167,6 +239,7 @@ footer {
                 } else {
                     alert(data.message);
                     // 게시글 작성 성공 후 게시판 목록 페이지로 이동하거나 원하는 동작 수행
+                    window.location.href = '/write';
                 }
             })
             .catch(error => {
@@ -174,8 +247,6 @@ footer {
                 alert('게시글 작성 중 오류가 발생했습니다.');
             });
         });
-        alert(data.message);
-        window.location.href = '/write';
     </script>
 </body>
 </html>

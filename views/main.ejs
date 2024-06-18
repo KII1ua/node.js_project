@@ -186,7 +186,6 @@ footer {
 <nav>
     <ul>
         <li><a href="#">홈</a></li>
-        <li><a href="#">뉴스</a></li>
         <li><a href="/ranking">순위</li>
         <li><a href="/schedule">경기 일정</a></li>
         <li><a href="/write">티켓 판매 게시판</a></li>
@@ -196,6 +195,7 @@ footer {
 
 
 <div class="main-content">
+    <!-- 로그인 시 db에 저장된 좋아하는 팀 순위를 메인 페이지에 출력 -->
     <% if (teamRanking) { %>
         <div class="favorite-team-ranking">
             <h2>좋아하는 팀 순위</h2>
