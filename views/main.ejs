@@ -159,6 +159,10 @@ footer {
             background-color: #ffeb3b;
             border-radius: 50%;
         }
+        .full-width-image {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -169,7 +173,7 @@ footer {
         <!-- 로그인 및 회원가입 버튼 추가 로그인 시 db에 저장된 이름 + 환영합니다, 로그아웃-->
         <div class="user-info">
             <% if (isLoggedIn) { %>
-                <span><%= userName %> 환영합니다!</span>
+                <span>환영합니다!</span>
                 <a href="/logout" class="logout-button">로그아웃</a>
               <% } else { %>
                 <a href="/login" class="login-button">로그인</a>
@@ -206,6 +210,9 @@ footer {
             <p>승률: <%= teamRanking.winningPercentage %></p>
         </div>
     <% } %>
+</div>
+<div>
+    <img src="/images/field.png" alt="My Image" class="full-width-image">
 </div>
 </div>
 

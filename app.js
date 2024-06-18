@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const homeRoutes = require('./routes/routes'); // connection 객체 전달
 
 app.use('/', homeRoutes);
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("views", path.join(__dirname, 'views'));
 app.set("view engine", "ejs");
