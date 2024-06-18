@@ -2,12 +2,37 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../db');
 const crypto = require('crypto');
+const fs = require('fs');
+const cheerio = require('cheerio');
 
-// 메인페이지 렌더링
+// 메인페이지 랜더링
 router.get('/', (req, res) => {
   const isLoggedIn = req.session.isLoggedIn || false;
   const userName = req.session.userName;
-  res.render('main', { isLoggedIn, userName });
+  const favoriteTeam = req.session.user ? req.session.user.favorite_team : null;
+
+  if (favoriteTeam) {
+    fs.readFile(path.join(__dirname, '../views/ranking.ejs'), 'utf8', (err, data) => {
+      if (err) {
+        console.error('ranking.ejs 파일 읽기 오류:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      const $ = cheerio.load(data);
+      const teamRow = $(`#team_${favoriteTeam}`).closest('tr');
+      const teamRanking = {
+        rank: teamRow.find('th').text(),
+        team: teamRow.find('.tm').text().trim(),
+        wins: teamRow.find('td').eq(3).text(),
+        losses: teamRow.find('td').eq(4).text(),
+        winningPercentage: teamRow.find('td').eq(6).text()
+      };
+
+      res.render('main', { isLoggedIn, userName, teamRanking });
+    });
+  } else {
+    res.render('main', { isLoggedIn, userName, teamRanking: null });
+  }
 });
 
 // 경기 일정 렌더링
@@ -75,8 +100,9 @@ router.post('/signup', (req, res) => {
     const rs_number = req.body.resident_number;     // 주민번호
     const phone = req.body.phone_number;        // 전화번호
     const birth = req.body.date;            // 생년월일
+    const favoriteTeam = req.body.favorite_team; // 좋아하는 구단
 
-    if(!id || !password || !name || !rs_number || !phone || !birth) {
+    if(!id || !password || !name || !rs_number || !phone || !birth ||!favoriteTeam) {
         return res.send('모든 필드를 입력하세요');
     }
 
@@ -96,8 +122,8 @@ router.post('/signup', (req, res) => {
     // crypto를 사용하여 비밀번호 암호화
     const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
-    const query = 'INSERT INTO register (id, password, name, rs_number, phone, birth) VALUES (?, ?, ?, ?, ?, ?)';
-    connection.query(query, [id, hashedPassword, name, rs_number, phone, birth], (err, result) => {
+    const query = 'INSERT INTO register (id, password, name, rs_number, phone, birth, favorite_team) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    connection.query(query, [id, hashedPassword, name, rs_number, phone, birth, favoriteTeam], (err, result) => {
     if (err) {
         console.error('MySQL 쿼리 오류: ', err);
         return res.status(500).send('서버 오류');
@@ -287,7 +313,7 @@ router.get('/my_info', (req, res) => {
     const userId = req.session.user.id;
 
     // 사용자 정보 조회 쿼리
-    const query = 'SELECT id, name, rs_number, phone, birth FROM register WHERE id = ?';
+    const query = 'SELECT id, name, rs_number, phone, birth, favorite_team FROM register WHERE id = ?';
     connection.query(query, [userId], (error, results) => {
       if (error) {
         console.error('사용자 정보 조회 중 오류 발생: ', error);
@@ -328,6 +354,22 @@ router.post('/change-password', (req, res) => {
       }
     });
   }
+});
+
+router.post('/change-favorite-team', (req, res) => {
+  const { favorite_team } = req.body;
+  const userId = req.session.user.id;
+
+  // 좋아하는 구단 업데이트
+  const updateQuery = 'UPDATE register SET favorite_team = ? WHERE id = ?';
+  connection.query(updateQuery, [favorite_team, userId], (updateError, updateResults) => {
+    if (updateError) {
+      console.error('좋아하는 구단 업데이트 중 오류 발생: ', updateError);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.send('좋아하는 구단이 성공적으로 변경되었습니다.');
+    }
+  });
 });
 
 module.exports = router;

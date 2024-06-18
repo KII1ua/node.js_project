@@ -10,6 +10,8 @@
   <p>주민번호: <%= user.rs_number %></p>
   <p>휴대폰번호: <%= user.phone %></p>
   <p>생년월일: <%= user.birth %></p>
+  <p>좋아하는구단: <%= user.favorite_team %></p>
+
   <h2>비밀번호 변경</h2>
   <form action="/change-password" method="POST">
     <label for="newPassword">새 비밀번호:</label>
@@ -19,6 +21,25 @@
     <input type="password" id="confirmPassword" name="confirmPassword" required><br>
 
     <button type="submit">비밀번호 변경</button>
+  </form>
+
+  <h2>좋아하는 구단 변경</h2>
+  <form action="/change-favorite-team" method="POST">
+    <label for="favorite_team">좋아하는 구단:</label><br>
+    <select id="favorite_team" name="favorite_team">
+      <option value="KIA">KIA</option>
+      <option value="LG">LG</option>
+      <option value="두산">두산</option>
+      <option value="삼성">삼성</option>
+      <option value="SSG">SSG</option>
+      <option value="NC">NC</option>
+      <option value="한화">한화</option>
+      <option value="롯데">롯데</option>
+      <option value="KT">KT</option>
+      <option value="키움">키움</option>
+    </select><br><br>
+
+    <button type="submit">좋아하는 구단 변경</button>
   </form>
 </body>
 </html>

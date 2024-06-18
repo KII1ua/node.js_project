@@ -196,13 +196,17 @@ footer {
 
 
 <div class="main-content">
-    <div class="article">
-        <h2>최신 야구 뉴스</h2>
-        <p>여기에 최신 야구 뉴스가 표시됩니다. 아래는 예시 기사입니다.</p>
-        <h3>예시 기사 제목</h3>
-        <p>예시 기사 내용입니다. 여기에 최신 야구 뉴스가 표시됩니다. 아래는 예시 기사입니다. 예시 기사 내용입니다. 여기에 최신 야구 뉴스가 표시됩니다. 아래는 예시 기사입니다.</p>
-    </div>
-   
+    <% if (teamRanking) { %>
+        <div class="favorite-team-ranking">
+            <h2>좋아하는 팀 순위</h2>
+            <p>순위: <%= teamRanking.rank %></p>
+            <p>팀: <%= teamRanking.team %></p>
+            <p>승: <%= teamRanking.wins %></p>
+            <p>패: <%= teamRanking.losses %></p>
+            <p>승률: <%= teamRanking.winningPercentage %></p>
+        </div>
+    <% } %>
+</div>
     <div class="article">
         <h2>다가오는 일정</h2>
         <div class="calendar">

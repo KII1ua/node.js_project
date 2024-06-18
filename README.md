@@ -58,3 +58,6 @@ CREATE TABLE user_chatrooms (
   FOREIGN KEY (user_id) REFERENCES register(id),
   FOREIGN KEY (chatroom_id) REFERENCES chat_rooms(id)
 );
+
+// register 테이블 변경 favorite_team 추가
+alter table register add column favorite_team varchar(255) not null;
