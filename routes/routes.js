@@ -63,12 +63,14 @@ router.get('/', (req, res) => {
 
 // 경기 일정 렌더링
 router.get('/schedule', (req,res) => {
-    res.render('schedule');
+    const isLoggedIn = req.session.isLoggedIn || false;
+    res.render('schedule', { isLoggedIn });
 });
 
 // 경기 순위 렌더링
 router.get('/ranking', (req, res) => {
-    res.render('ranking');
+    const isLoggedIn = req.session.isLoggedIn || false;
+    res.render('ranking', { isLoggedIn });
 });
 
 // 로그인 렌더링
@@ -172,13 +174,14 @@ router.get('/logout', (req, res) => {
 
 // 게시글 조회 및 작성 페이지
 router.get('/write', (req, res) => {
+    const isLoggedIn = req.session.isLoggedIn || false;
     const query = 'SELECT article.*, register.name AS author_name FROM article JOIN register ON article.author_id = register.id ORDER BY article.created_at DESC';
     connection.query(query, (error, results) => {
       if (error) {
         console.error('게시글 조회 중 오류 발생: ', error);
-        res.render('article', { articles: [] }); // 오류 발생 시 빈 배열 전달
+        res.render('article', { articles: [], isLoggedIn }); // 오류 발생 시 빈 배열 전달
       } else {
-        res.render('article', { articles: results }); // 조회 결과를 articles 변수에 할당하여 전달
+        res.render('article', { articles: results, isLoggedIn }); // 조회 결과를 articles 변수에 할당하여 전달
       }
   });
 });
