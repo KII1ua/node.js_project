@@ -78,7 +78,7 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 
-// Login Post
+// 로그인 요청
 router.post('/login', (req, res) => {
     const id = req.body.id;
     const password = req.body.password;

@@ -2,7 +2,7 @@
 const config = {
     host: 'localhost',     
     user: 'root',
-    password: 'tjddbs',
+    password: 'password',
     database: 'nodejs'
 }
 
